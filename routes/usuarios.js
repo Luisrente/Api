@@ -31,7 +31,7 @@ router.get('/', usuariosAllGet );
 
 
 //LIST USER BY ID
-router.get('/:id', usuarioByIdGet );
+router.get('/:uid', usuarioByIdGet );
 
 
 //UPDATE PASSWORD
