@@ -107,9 +107,8 @@ const googleSignin = async(req, res = response) => {
 }
 
 
-  const sendEmail = async (req, res) => {
+const sendEmail = async (req, res) => {
  const { correo } = req.body;
-
   try {
     // Configurar el transporte de correo
     const transporter = nodemailer.createTransport({
@@ -117,8 +116,8 @@ const googleSignin = async(req, res = response) => {
       host: "smtp.gmail.com",
       port: 587,
       auth: {
-        user: "luisrentef@gmail.com",
-        pass: "xxyjcjlkwniacgqb"
+        user:process.env.USER,
+        pass: process.env.PASS
       }
     });
     const numeroAleatorio = generarNumero();
@@ -128,7 +127,7 @@ const googleSignin = async(req, res = response) => {
         const usuario = await Usuario.findByIdAndUpdate( user._id, {codigo:numeroAleatorio} );
         //   Definir los detalles del correo electrónico
         const mailOptions = {
-          from: 'luisrentef@gmail.com',
+          from: process.env.USER,
           to: user.correo,
           subject: 'Token',
           text: string
