@@ -46,8 +46,8 @@ const usuariosAllGet = async(req = request, res = response) => {
 
 const usuariosPost = async(req, res = response) => {
     
-    const { cedula,nombre1,nombre2,apellido1,apellido2,facultad,programa,img, correo, verifi, password, rol } = req.body;
-    const usuario = new Usuario({ cedula,nombre1,nombre2,apellido1,apellido2,facultad,programa,img, correo, verifi,password, rol });
+    const { cedula,codigo,nombre1,nombre2,apellido1,apellido2,facultad,programa,img, correo, verifi, password, rol } = req.body;
+    const usuario = new Usuario({ cedula,codigo,nombre1,nombre2,apellido1,apellido2,facultad,programa,img, correo, verifi,password, rol });
 
     // Encriptar la contraseña
     const salt = bcryptjs.genSaltSync();

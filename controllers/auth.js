@@ -1,10 +1,12 @@
-const { response } = require('express');
+const { response, text } = require('express');
 const bcryptjs = require('bcryptjs')
 
 const Usuario = require('../models/usuario');
 
 const { generarJWT } = require('../helpers/generar-jwt');
 const { googleVerify } = require('../helpers/google-verify');
+const { generarNumero } = require('../helpers/generar-code');
+const nodemailer = require('nodemailer');
 
 
 const login = async(req, res = response) => {
@@ -105,8 +107,54 @@ const googleSignin = async(req, res = response) => {
 }
 
 
+  const sendEmail = async (req, res) => {
+ const { correo } = req.body;
+
+  try {
+    // Configurar el transporte de correo
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      host: "smtp.gmail.com",
+      port: 587,
+      auth: {
+        user: "luisrentef@gmail.com",
+        pass: "xxyjcjlkwniacgqb"
+      }
+    });
+    const numeroAleatorio = generarNumero();
+    let string=  'El token es '+ numeroAleatorio;
+    let user = await Usuario.findOne({ correo });    
+    if(user){
+        const usuario = await Usuario.findByIdAndUpdate( user._id, {codigo:numeroAleatorio} );
+        //   Definir los detalles del correo electrónico
+        const mailOptions = {
+          from: 'luisrentef@gmail.com',
+          to: user.correo,
+          subject: 'Token',
+          text: string
+        };
+        // Enviar el correo electrónico
+        const info = await transporter.sendMail(mailOptions);
+        res.json({
+            usuario
+        })
+    }else{
+        res.status(404).json({
+            msg: '404 not found'
+        });
+
+    }
+  } catch (error) {
+    res.status(500).json({
+        msg: '500 ERROR'
+    });
+  }
+};
+
+
 
 module.exports = {
     login,
-    googleSignin
+    googleSignin,
+    sendEmail
 }

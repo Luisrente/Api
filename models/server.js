@@ -18,8 +18,6 @@ class Server {
             usuarios:   '/api/usuarios',
             uploads:    '/api/uploads',
         }
-
-
         // Conectar a base de datos
         this.conectarDB();
 
