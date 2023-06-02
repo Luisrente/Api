@@ -114,7 +114,7 @@ const sendEmail = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       host: "smtp.gmail.com",
-      port: 587,
+      port: 465,
       auth: {
         user:process.env.USER,
         pass: process.env.PASS
@@ -122,18 +122,28 @@ const sendEmail = async (req, res) => {
     });
     const numeroAleatorio = generarNumero();
     let string=  'El token es '+ numeroAleatorio;
-    let user = await Usuario.findOne({ correo });    
+    let user = await Usuario.findOne({ correo });   
+    
+
     if(user){
         const usuario = await Usuario.findByIdAndUpdate( user._id, {codigo:numeroAleatorio} );
         //   Definir los detalles del correo electrónico
         const mailOptions = {
-          from: process.env.USER,
-          to: user.correo,
+          from: "luisrssentef@gmail.com",
+          to: "rentetecnologia@gmail.com",
           subject: 'Token',
-          text: string
+          text: "string"
         };
-        // Enviar el correo electrónico
-        const info = await transporter.sendMail(mailOptions);
+        console.log("eeeeee");
+        try {
+            const info = await transporter.sendMail(mailOptions);
+        } catch (error) {
+            console.log(error);
+            
+        }
+
+        console.log("eeee,e,e,,ee");
+
         res.json({
             usuario
         })
