@@ -8,12 +8,22 @@ const Usuario = require('../models/usuario');
 
 const usuarioByIdGet = async(req = request, res = response) => {
 
-    const { uid } = req.params;
-    if (uid) {
-    console.log("ddddddddd");
-    const usuario = await Usuario.findById(uid);
-    res.json(usuario);
-    }    
+
+    try {
+
+        const { uid } = req.params;
+        if (uid) {
+        const usuario = await Usuario.findById(uid);
+        res.json(usuario);
+        } 
+ 
+    } catch (error) {
+
+        
+        
+    }
+
+     
 }
 
 

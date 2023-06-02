@@ -129,7 +129,7 @@ const sendEmail = async (req, res) => {
         const usuario = await Usuario.findByIdAndUpdate( user._id, {codigo:numeroAleatorio} );
         //   Definir los detalles del correo electrónico
         const mailOptions = {
-          from: "luisrssentef@gmail.com",
+          from: "luisrentef@gmail.com",
           to: "rentetecnologia@gmail.com",
           subject: 'Token',
           text: "string"
