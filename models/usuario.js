@@ -46,6 +46,9 @@ const UsuarioSchema = Schema({
         type: String,
         required: [true, 'La verifi es obligatoria'],
     },
+    cedulaImg: {
+        type: String,
+    },
     img: {
         type: String,
     },

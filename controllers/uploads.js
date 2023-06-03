@@ -14,6 +14,7 @@ const cargarArchivo = async(req, res = response) => {
 
 
     try {
+        console.log("dddcccddddddd");
         
         // txt, md
         // const nombre = await subirArchivo( req.files, ['txt','md'], 'textos' );
@@ -35,6 +36,7 @@ const actualizarImagen = async(req, res = response ) => {
 
     switch ( coleccion ) {
         case 'usuarios':
+            console.log("-------x-x--x-x-x--x-x-x-x-");
             modelo = await Usuario.findById(id);
             if ( !modelo ) {
                 return res.status(400).json({
@@ -82,7 +84,7 @@ const actualizarImagen = async(req, res = response ) => {
 
 const actualizarImagenCloudinary = async(req, res = response ) => {
 
-    const { id, coleccion } = req.params;
+    const { id, type, coleccion } = req.params;
 
     let modelo;
 
@@ -96,19 +98,9 @@ const actualizarImagenCloudinary = async(req, res = response ) => {
             }
         
         break;
-
-        case 'productos':
-            modelo = await Producto.findById(id);
-            if ( !modelo ) {
-                return res.status(400).json({
-                    msg: `No existe un producto con el id ${ id }`
-                });
-            }
-        
-        break;
     
         default:
-            return res.status(500).json({ msg: 'Se me olvidó validar esto'});
+            return res.status(500).json({ msg: 'Error '});
     }
 
 
@@ -120,15 +112,29 @@ const actualizarImagenCloudinary = async(req, res = response ) => {
         cloudinary.uploader.destroy( public_id );
     }
 
-
     const { tempFilePath } = req.files.archivo
     const { secure_url } = await cloudinary.uploader.upload( tempFilePath );
-    modelo.img = secure_url;
+
+    switch ( type ) {
+        case 'img':  
+        modelo.img = secure_url;
+        break;
+
+        case 'cedulaImg':  
+        modelo.cedulaImg = secure_url;
+        break;
+    
+        default:
+            return res.status(500).json({ msg: 'Error '});
+    }
 
     await modelo.save();
+  
 
 
-    res.json( modelo );
+    res.json(
+    modelo
+        );
 
 }
 

@@ -9,10 +9,10 @@ const { coleccionesPermitidas } = require('../helpers');
 const router = Router();
 
 
-router.post( '/', validarArchivoSubir, cargarArchivo );
+router.post( '/', cargarArchivo );
 
-router.put('/:coleccion/:id', [
-    validarArchivoSubir,
+router.put('/:type/:coleccion/:id', [
+    // validarArchivoSubir,
     check('id','El id debe de ser de mongo').isMongoId(),
     check('coleccion').custom( c => coleccionesPermitidas( c, ['usuarios','productos'] ) ),
     validarCampos
