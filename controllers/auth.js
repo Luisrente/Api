@@ -121,7 +121,7 @@ const sendEmail = async (req, res) => {
       }
     });
     const numeroAleatorio = generarNumero();
-    let string=  'El token es '+ numeroAleatorio;
+    let tokenstring=  'El token es '+ numeroAleatorio;
     let user = await Usuario.findOne({ correo });   
     
 
@@ -129,20 +129,16 @@ const sendEmail = async (req, res) => {
         const usuario = await Usuario.findByIdAndUpdate( user._id, {codigo:numeroAleatorio} );
         //   Definir los detalles del correo electrónico
         const mailOptions = {
-          from: "luisrentef@gmail.com",
-          to: "rentetecnologia@gmail.com",
+          from:process.env.USER,
+          to: correo,
           subject: 'Token',
-          text: "string"
+          text: tokenstring
         };
-        console.log("eeeeee");
         try {
             const info = await transporter.sendMail(mailOptions);
         } catch (error) {
-            console.log(error);
-            
+            console.log(error);         
         }
-
-        console.log("eeee,e,e,,ee");
 
         res.json({
             usuario
