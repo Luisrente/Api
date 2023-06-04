@@ -134,12 +134,6 @@ const actualizarImagenCloudinary = async(req, res = response ) => {
             return res.status(500).json({ msg: 'Error '});
     }
 
-
-    if(modelo.img && modelo.cedulaImg ){
-        modelo.verifi='pending';
-    }
-    
-
     await modelo.save();
   
 
