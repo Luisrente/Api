@@ -39,6 +39,7 @@ const usuarioByQr = async(req = request, res = response) => {
             }    
         }
     } catch (error) { 
+        console.log(error);
         res.status(404).json({
             msg: ' 404 invalid parameter QR'
         });    
