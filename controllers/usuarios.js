@@ -20,6 +20,7 @@ const usuarioByCedula = async(req = request, res = response) => {
 const usuarioByQr = async(req = request, res = response) => {
     try {
         const { id } = req.params;
+        console.log(id);
         const token = decryptString(id);
         if (token) {
             const now = new Date();
