@@ -15,6 +15,7 @@ const { esRoleValido, emailExiste, existeUsuarioPorId } = require('../helpers/db
 const { 
         usuariosAllGet,
         usuarioByIdGet,
+        usuarioByQr,
 
         usuariosPutPassword,
         usuariosPutState,
@@ -35,6 +36,7 @@ router.get('/:uid', usuarioByIdGet );
 
 
 router.get('/cedula/:cedula', usuarioByCedula );
+router.get('/qr/:id', usuarioByQr );
 
 
 //UPDATE PASSWORD

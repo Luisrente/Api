@@ -1,9 +1,7 @@
 const { response, request } = require('express');
 const bcryptjs = require('bcryptjs');
-
-
+const { decryptString } = require('../helpers/qr');
 const Usuario = require('../models/usuario');
-
 
 
 const usuarioByCedula = async(req = request, res = response) => {
@@ -16,6 +14,34 @@ const usuarioByCedula = async(req = request, res = response) => {
  
     } catch (error) {  
         
+    }     
+}
+
+const usuarioByQr = async(req = request, res = response) => {
+    try {
+        const { id } = req.params;
+        const token = decryptString(id);
+        if (token) {
+            const now = new Date();
+            const parts = token.split('/');
+            const cedula=parts[0];
+            const code= parts[1]+ ' '+ parts[2];
+            const date = new Date(code);
+            const diffInMilliseconds = Math.abs(now - date);
+            const diffInSeconds = diffInMilliseconds / 1000;
+            if (cedula  && diffInSeconds <= 120) {
+              const usuario = await Usuario.findOne({cedula});
+              res.status(200).json(usuario);
+            } else{
+                res.status(400).json({
+                    msg: 'invalid parameter QR'
+                })
+            }    
+        }
+    } catch (error) { 
+        res.status(404).json({
+            msg: ' 404 invalid parameter QR'
+        });    
     }     
 }
 
@@ -128,6 +154,7 @@ module.exports = {
     usuarioByIdGet,
 
     usuarioByCedula,
+    usuarioByQr,
     usuariosPost,
 
     usuariosPutPassword,
