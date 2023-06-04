@@ -6,24 +6,30 @@ const Usuario = require('../models/usuario');
 
 
 
-const usuarioByIdGet = async(req = request, res = response) => {
-
-
+const usuarioByCedula = async(req = request, res = response) => {
     try {
+        const { cedula } = req.params;
+        if (cedula) {
+        const usuario = await Usuario.findOne({cedula});
+        res.json(usuario);
+        } 
+ 
+    } catch (error) {  
+        
+    }     
+}
 
+const usuarioByIdGet = async(req = request, res = response) => {
+    try {
         const { uid } = req.params;
         if (uid) {
         const usuario = await Usuario.findById(uid);
         res.json(usuario);
         } 
  
-    } catch (error) {
-
+    } catch (error) {  
         
-        
-    }
-
-     
+    }     
 }
 
 
@@ -121,7 +127,7 @@ module.exports = {
     usuariosAllGet,
     usuarioByIdGet,
 
-
+    usuarioByCedula,
     usuariosPost,
 
     usuariosPutPassword,

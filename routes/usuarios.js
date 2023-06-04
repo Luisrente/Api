@@ -18,7 +18,7 @@ const {
 
         usuariosPutPassword,
         usuariosPutState,
-
+        usuarioByCedula,
         usuariosPost,
         usuariosDelete,
         usuariosPatch } = require('../controllers/usuarios');
@@ -32,6 +32,9 @@ router.get('/', usuariosAllGet );
 
 //LIST USER BY ID
 router.get('/:uid', usuarioByIdGet );
+
+
+router.get('/cedula/:cedula', usuarioByCedula );
 
 
 //UPDATE PASSWORD
