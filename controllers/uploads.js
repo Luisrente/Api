@@ -103,7 +103,6 @@ const actualizarImagenCloudinary = async(req, res = response ) => {
             return res.status(500).json({ msg: 'Error '});
     }
 
-
     // Limpiar imágenes previas
     if ( modelo.img  &&  type=='img') {
         const nombreArr = modelo.img.split('/');
@@ -134,6 +133,12 @@ const actualizarImagenCloudinary = async(req, res = response ) => {
         default:
             return res.status(500).json({ msg: 'Error '});
     }
+
+
+    if(modelo.img && modelo.cedulaImg ){
+        modelo.verifi='pending';
+    }
+    
 
     await modelo.save();
   

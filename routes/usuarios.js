@@ -38,7 +38,6 @@ router.get('/:uid', usuarioByIdGet );
 router.put('/:id',[
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeUsuarioPorId ),
-     check('rol').custom( esRoleValido ), 
     validarCampos
 ],usuariosPutPassword );
 

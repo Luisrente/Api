@@ -83,7 +83,6 @@ const usuariosPutState = async(req, res = response) => {
 }
 
 const usuariosPutPassword = async(req, res = response) => {
-
     const { id } = req.params;
     const { _id, password, google, correo, ...resto } = req.body;
 
@@ -92,11 +91,11 @@ const usuariosPutPassword = async(req, res = response) => {
         const salt = bcryptjs.genSaltSync();
         resto.password = bcryptjs.hashSync( password, salt );
     }
-
-    const usuario = await Usuario.findByIdAndUpdate( id, resto );
-
+    const user = await Usuario.findByIdAndUpdate( id, resto );
+    const usuario = await Usuario.findById( id );
     res.json(usuario);
 }
+
 
 const usuariosPatch = (req, res = response) => {
     res.json({
