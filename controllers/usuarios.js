@@ -21,7 +21,7 @@ const usuarioByQr = async(req = request, res = response) => {
     try {
         const { id } = req.params;
         console.log(id);
-        const token = decryptString(id);
+        const token = decryptString(id.toString());
         if (token) {
             const now = new Date();
             const parts = token.split('/');
