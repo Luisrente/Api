@@ -23,7 +23,7 @@ const usuarioByQr = async(req = request, res = response) => {
         console.log(id);
         const token = decryptString(id.toString());
         console.log(token);
-        if (token) {
+        
             const now = new Date();
             const parts = token.split('/');
             const cedula=parts[0];
@@ -31,6 +31,9 @@ const usuarioByQr = async(req = request, res = response) => {
             const date = new Date(code);
             const diffInMilliseconds = Math.abs(now - date);
             const diffInSeconds = diffInMilliseconds / 1000;
+
+            console.log(diffInSeconds);
+            console.log(cedula);
             if (cedula  && diffInSeconds <= 120) {
               const usuario = await Usuario.findOne({cedula});
               res.status(200).json(usuario);
@@ -38,7 +41,7 @@ const usuarioByQr = async(req = request, res = response) => {
                 res.status(400).json({
                     msg: 'invalid parameter QR'
                 })
-            }    
+                
         }
     } catch (error) { 
         console.log(error);
