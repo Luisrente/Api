@@ -30,13 +30,14 @@ const usuarioByQr = async(req = request, res = response) => {
             const cedula=parts[0];
             const code= parts[1]+ ' '+ parts[2];
             const horaUTC = moment.utc(code);
+            const horaServidor = moment();
+
             const horaBogota = horaUTC.tz('America/Bogota');
-            const diferenciaHoraria = horaUTC.diff(horaBogota, 'seconds');
+            const diferenciaHoraria = horaServidor.diff(horaBogota, 'seconds');
 
             console.log('Diferencia horaria en segundos entre el servidor y Bogotá:', diferenciaHoraria, 'segundos');
 
             const date = new Date(code);
-            const horaServidor = moment();
             console.log(horaBogota);
 
             console.log(date);
