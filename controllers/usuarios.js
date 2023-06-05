@@ -2,6 +2,7 @@ const { response, request } = require('express');
 const bcryptjs = require('bcryptjs');
 const { decryptString } = require('../helpers/qr');
 const Usuario = require('../models/usuario');
+const moment = require('moment-timezone');
 
 
 const usuarioByCedula = async(req = request, res = response) => {
@@ -22,18 +23,21 @@ const usuarioByQr = async(req = request, res = response) => {
         const { id } = req.params;
         console.log(id);
         const token = decryptString(id.toString());
-        console.log(token);
-        
+        console.log()
+        if (token) {
             const now = new Date();
             const parts = token.split('/');
             const cedula=parts[0];
             const code= parts[1]+ ' '+ parts[2];
             const date = new Date(code);
-            const diffInMilliseconds = Math.abs(now - date);
+            const horaServidor = moment();
+            const horaBogota = horaServidor.tz('America/Bogota');
+            console.log(horaBogota);
+            console.log(date);
+            const diffInMilliseconds = Math.abs(horaBogota - date);
             const diffInSeconds = diffInMilliseconds / 1000;
 
             console.log(diffInSeconds);
-            console.log(cedula);
             if (cedula  && diffInSeconds <= 120) {
               const usuario = await Usuario.findOne({cedula});
               res.status(200).json(usuario);
@@ -41,7 +45,7 @@ const usuarioByQr = async(req = request, res = response) => {
                 res.status(400).json({
                     msg: 'invalid parameter QR'
                 })
-                
+            }    
         }
     } catch (error) { 
         console.log(error);
