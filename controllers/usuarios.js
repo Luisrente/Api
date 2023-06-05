@@ -26,6 +26,12 @@ const usuarioByQr = async(req = request, res = response) => {
         console.log()
         if (token) {
             const now = new Date();
+
+            console.log("----------------");
+            console.log(now);
+            console.log("---------------");
+
+
             const parts = token.split('/');
             const cedula=parts[0];
             const code= parts[1]+ ' '+ parts[2];
@@ -33,7 +39,10 @@ const usuarioByQr = async(req = request, res = response) => {
             const horaServidor = moment();
 
             const horaBogota = horaUTC.tz('America/Bogota');
-            const diferenciaHoraria = horaServidor.diff(horaBogota, 'seconds');
+            const horaBocgota = horaServidor.tz('America/Bogota');
+            console.log(horaBocgota);
+            console.log(horaBogota);
+            const diferenciaHoraria = horaBocgota.diff(horaBogota, 'seconds');
 
             console.log('Diferencia horaria en segundos entre el servidor y Bogotá:', diferenciaHoraria, 'segundos');
 
