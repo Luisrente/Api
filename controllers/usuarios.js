@@ -1,8 +1,11 @@
 const { response, request } = require('express');
 const bcryptjs = require('bcryptjs');
 const { decryptString } = require('../helpers/qr');
-const Usuario = require('../models/usuario');
+const Usuario = require('../models/user');
+const User = require('../models/user');
 const moment = require('moment-timezone');
+const { Campus } = require('../models');
+const {Faculty,Program,Enrollment} = require('../models/index');
 
 
 const usuarioByCedula = async(req = request, res = response) => {
@@ -112,25 +115,124 @@ const usuariosAllGet = async(req = request, res = response) => {
     
 }
 
-const usuariosPost = async(req, res = response) => {
-    
-    const { cedula,codigo,nombre1,nombre2,apellido1,apellido2,facultad,programa,img, correo, verifi, password, rol } = req.body;
-    const usuario = new Usuario({ cedula,codigo,nombre1,nombre2,apellido1,apellido2,facultad,programa,img, correo, verifi,password, rol });
 
-    // Encriptar la contraseña
-    const salt = bcryptjs.genSaltSync();
-    usuario.password = bcryptjs.hashSync( password, salt );
 
-    // Guardar en BD
-    await usuario.save();
+const userPost = async(req, res = response) => {
+    try {
+        const body= req.body;
+        const enrollmentDB = await Enrollment.findOne({ code: body.code });
+        const userDB = await User.findOne({ identification: body.identification });
+        const programDB = await Program.findOne({ name: body.nombre });
+        console.log(userDB);
+        console.log(programDB);
+        if (enrollmentDB) {
 
-    res.json({
-        usuario
-    });
+            const enrollmentDBUpdate = await Enrollment.findByIdAndUpdate(user.id,
+                {
+                "user_id":  userDB.id,
+                "program_id":  programDB.id,
+                "semester": semester,
+                }
+                );
+        } else {
+            const enrollment = new Enrollment({user_id:userDB._id,program_id:programDB._id,semester:body.semester,code:body.code , createdAt: Date.now(),  });
+            await enrollment.save(); 
+        }
+    } catch (error) {
+        console.log(error);
+   
+    }
 }
 
-const usuariosPutState = async(req, res = response) => {
 
+// const userPost = async(req, res = response) => {
+
+
+
+// {
+       
+//     "first_name": "Joeehn",
+//     "middle_name": "Doe",
+//     "last_name": "Smissth",
+//     "second_last_name": "Johnson",
+//     "identification": 126266262621,
+//     "email": "john.doe@example.com",
+//     "role": "USER_ROLE",
+//     "status":"ACTIVO",
+//     "campus":"MONTERIA"
+//   }
+
+
+
+
+
+//     try {
+//     const {
+//         first_name,
+//         middle_name,
+//         last_name,
+//         second_last_name,
+//         identification,
+//         email,
+//         role,
+//         status,
+//         campus
+//     } 
+//     = req.body;
+//     const user = await User.findOne({identification});
+//     if (user) {
+//         const userUpdate = await User.findByIdAndUpdate(user.id,
+//         {
+//         "first_name":first_name,
+//         "middle_name":middle_name,
+//         "last_name":last_name,
+//         "second_last_name":second_last_name,
+//         "identification":identification,
+//         "email":email,
+//         "role":role,
+//         "status":status,
+//         "campus":campus
+//         });
+//     } else {
+//   const userCreate = new Usuario(
+//     { 
+//         first_name,
+//         middle_name,
+//         last_name,
+//         second_last_name,
+//         identification,
+//         email,
+//         role,
+//         status,
+//         campus
+//    }
+//    );
+//     const salt = bcryptjs.genSaltSync();
+//     userCreate.password = bcryptjs.hashSync( identification.toString(), salt );
+//     campu = await Campus.findOne({"name":campus})
+//     userCreate.campus_id= campu.id;
+//     userCreate.createdAt= await  Date.now();
+//     userCreate.profile_picture= '';
+//     userCreate.identification_picture= '';
+//     const result= await userCreate.save(); 
+// }    
+
+//     } catch (error) {
+//         console.log(error);
+//         res.status(400).json({
+//             "msg": "User no create"
+//         }); 
+//     }  
+// }
+
+
+
+
+
+
+
+
+const usuariosPutState = async(req, res = response) => {
     const { id } = req.params;
     const { _id, password, google, ...resto } = req.body;
 
@@ -175,13 +277,13 @@ const usuariosDelete = async(req, res = response) => {
 
 module.exports = {
 
+    userPost,
 
     usuariosAllGet,
     usuarioByIdGet,
 
     usuarioByCedula,
     usuarioByQr,
-    usuariosPost,
 
     usuariosPutPassword,
     usuariosPutState,

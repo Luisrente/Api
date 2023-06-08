@@ -12,11 +12,17 @@ class Server {
 
         this.paths = {
             auth:       '/api/auth',
+
             buscar:     '/api/buscar',
             categorias: '/api/categorias',
             productos:  '/api/productos',
-            usuarios:   '/api/users',
+
+            user:       '/api/users',
+            enrollment: '/api/enrollment',
+            faculty:    '/api/faculty',
             uploads:    '/api/uploads',
+            program:    '/api/program',
+            campus:    '/api/campus',
         }
         // Conectar a base de datos
         this.conectarDB();
@@ -38,13 +44,10 @@ class Server {
         // CORS
         this.app.use( cors() );
 
-        // Lectura y parseo del body
         this.app.use( express.json() );
 
-        // Directorio Público
         this.app.use( express.static('public') );
 
-        // Fileupload - Carga de archivos
         this.app.use( fileUpload({
             useTempFiles : true,
             tempFileDir : '/tmp/',
@@ -56,11 +59,12 @@ class Server {
     routes() {
         
         this.app.use( this.paths.auth, require('../routes/auth'));
-        this.app.use( this.paths.buscar, require('../routes/buscar'));
-        this.app.use( this.paths.categorias, require('../routes/categorias'));
-        this.app.use( this.paths.productos, require('../routes/productos'));
-        this.app.use( this.paths.usuarios, require('../routes/usuarios'));
-        this.app.use( this.paths.uploads, require('../routes/uploads'));
+        this.app.use( this.paths.user, require('../routes/user'));
+
+        // this.app.use( this.paths.buscar, require('../routes/buscar'));
+        // this.app.use( this.paths.categorias, require('../routes/categorias'));
+        // this.app.use( this.paths.productos, require('../routes/productos'));
+        // this.app.use( this.paths.uploads, require('../routes/uploads'));
         
     }
 

@@ -1,25 +1,16 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-
-
-const { validarCampos } = require('../middlewares/validar-campos');
-
-
-const { login, googleSignin , sendEmail} = require('../controllers/auth');
-
+const { validateFields } = require('../middlewares/index');
+const { login , sendEmail} = require('../controllers/auth');
 
 const router = Router();
 
 router.post('/login',[
-    check('correo', 'El correo es obligatorio').isEmail(),
-    check('password', 'La contraseña es obligatoria').not().isEmpty(),
-    validarCampos
+    check('email', 'Email is required').isEmail(),
+    check('password', 'Password is required').not().isEmpty(),
+    validateFields
 ],login );
 
-router.post('/google',[
-    check('id_token', 'El id_token es necesario').not().isEmpty(),
-    validarCampos
-], googleSignin );
 
 router.post('/send',[
 ], sendEmail );

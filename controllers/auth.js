@@ -1,110 +1,56 @@
 const { response, text } = require('express');
 const bcryptjs = require('bcryptjs')
-
-const Usuario = require('../models/usuario');
-
-const { generarJWT } = require('../helpers/generar-jwt');
-const { googleVerify } = require('../helpers/google-verify');
-const { generarNumero } = require('../helpers/generar-code');
 const nodemailer = require('nodemailer');
+const {User,Campus} = require('../models/index');
+const { generateJWT } = require('../helpers/generate-jwt');
+const { generateCode } = require('../helpers/generate-code');
 
 
 const login = async(req, res = response) => {
-
-    const { correo, password } = req.body;
+    const { email, password } = req.body;
 
     try {
-      
-        // Verificar si el email existe
-        const usuario = await Usuario.findOne({ correo });
-        if ( !usuario ) {
+        // const user = await User.findOne({ email });
+   const user   = await User.findOne({email})
+    .populate('campus_id')
+    .populate('campus_id')
+    .exec((err, user) => {
+        if (err) {
+            // manejo de error
+        } else {
+            // El objeto user ahora tiene el campo campus_id poblado con el objeto Campus relacionado
+            console.log(user);
+        }
+    });
+
+        if ( !user ) {
             return res.status(400).json({
-                msg: 'Usuario / Password no son correctos - correo'
+                msg: 'User / Password is incorrect - correo'
             });
         }
-
-        // SI el usuario está activo
-        if ( !usuario.estado ) {
-            return res.status(400).json({
-                msg: 'Usuario / Password no son correctos - estado: false'
-            });
-        }
-
         // Verificar la contraseña
-        const validPassword = bcryptjs.compareSync( password, usuario.password );
+        const validPassword = bcryptjs.compareSync( password, user.password );
         if ( !validPassword ) {
             return res.status(400).json({
-                msg: 'Usuario / Password no son correctos - password'
+                msg: 'User / Password is incorrect - password - password'
             });
         }
-
         // Generar el JWT
-        const token = await generarJWT( usuario.id );
+        const token = await generateJWT( 'user._id' );
 
         res.json({
-            usuario,
+            user,
             token
         })
-
     } catch (error) {
-        console.log(error)
+        console.log(error);
         res.status(500).json({
-            msg: 'Hable con el administrador'
+            msg: 'Please contact the administrator'
         });
     }   
 
 }
 
-
-const googleSignin = async(req, res = response) => {
-
-    const { id_token } = req.body;
-    
-    try {
-        const { correo, nombre, img } = await googleVerify( id_token );
-
-        let usuario = await Usuario.findOne({ correo });
-
-        if ( !usuario ) {
-            // Tengo que crearlo
-            const data = {
-                nombre,
-                correo,
-                password: ':P',
-                img,
-                google: true
-            };
-
-            usuario = new Usuario( data );
-            await usuario.save();
-        }
-
-        // Si el usuario en DB
-        if ( !usuario.estado ) {
-            return res.status(401).json({
-                msg: 'Hable con el administrador, usuario bloqueado'
-            });
-        }
-
-        // Generar el JWT
-        const token = await generarJWT( usuario.id );
-        
-        res.json({
-            usuario,
-            token
-        });
-        
-    } catch (error) {
-
-        res.status(400).json({
-            msg: 'Token de Google no es válido'
-        })
-
-    }
-
-
-
-}
 
 
 const sendEmail = async (req, res) => {
@@ -120,13 +66,13 @@ const sendEmail = async (req, res) => {
         pass: process.env.PASS
       }
     });
-    const numeroAleatorio = generarNumero();
+    const numeroAleatorio = generateCode();
     let tokenstring=  'El token es '+ numeroAleatorio;
-    let user = await Usuario.findOne({ correo });   
+    let user = await User.findOne({ correo });   
     
 
     if(user){
-        const usuario = await Usuario.findByIdAndUpdate( user._id, {codigo:numeroAleatorio} );
+        const User = await User.findByIdAndUpdate( user._id, {codigo:numeroAleatorio} );
         //   Definir los detalles del correo electrónico
         const mailOptions = {
           from:process.env.USER,
@@ -141,7 +87,7 @@ const sendEmail = async (req, res) => {
         }
 
         res.json({
-            usuario
+            User
         })
     }else{
         res.status(404).json({
@@ -158,8 +104,8 @@ const sendEmail = async (req, res) => {
 
 
 
+
 module.exports = {
     login,
-    googleSignin,
     sendEmail
 }
