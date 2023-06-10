@@ -3,7 +3,7 @@ const bcryptjs = require('bcryptjs')
 const nodemailer = require('nodemailer');
 const {User, Enrollment} = require('../models/index');
 const { generateJWT } = require('../helpers/generate-jwt');
-const { generateCode } = require('../helpers/generate-code');
+const { generateNumero } = require('../helpers/generate-code');
 
 
 const login = async(req, res = response) => {
@@ -58,7 +58,7 @@ const login = async(req, res = response) => {
 
 
 const sendEmail = async (req, res) => {
- const { correo } = req.body;
+ const { email } = req.body;
   try {
     // Configurar el transporte de correo
     const transporter = nodemailer.createTransport({
@@ -70,29 +70,23 @@ const sendEmail = async (req, res) => {
         pass: process.env.PASS
       }
     });
-    const numeroAleatorio = generateCode();
+    const numeroAleatorio = generateNumero();
     let tokenstring=  'El token es '+ numeroAleatorio;
-    let user = await User.findOne({ correo });   
-    
-
+    let user = await User.findOne({ email });   
     if(user){
-        const User = await User.findByIdAndUpdate( user._id, {codigo:numeroAleatorio} );
-        //   Definir los detalles del correo electrónico
         const mailOptions = {
           from:process.env.USER,
-          to: correo,
+          to: email,
           subject: 'Token',
           text: tokenstring
         };
-        try {
-            const info = await transporter.sendMail(mailOptions);
-        } catch (error) {
-            console.log(error);         
+        const info = await transporter.sendMail(mailOptions);
+        console.log(info);
+        if(info){
+            res.json({
+                User
+            })
         }
-
-        res.json({
-            User
-        })
     }else{
         res.status(404).json({
             msg: '404 not found'
@@ -100,6 +94,7 @@ const sendEmail = async (req, res) => {
 
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json({
         msg: '500 ERROR'
     });

@@ -1,18 +1,16 @@
 const { response, request } = require('express');
 const bcryptjs = require('bcryptjs');
 const { decryptString } = require('../helpers/qr');
-const Usuario = require('../models/user');
-const User = require('../models/user');
 const moment = require('moment-timezone');
 const { Campus } = require('../models');
-const {Faculty,Program,Enrollment} = require('../models/index');
+const {CardApplication, User} = require('../models/index');
 
 
 const usuarioByCedula = async(req = request, res = response) => {
     try {
         const { cedula } = req.params;
         if (cedula) {
-        const usuario = await Usuario.findOne({cedula});
+        const usuario = await User.findOne({cedula});
         res.json(usuario);
         } 
  
@@ -58,7 +56,7 @@ const usuarioByQr = async(req = request, res = response) => {
 
             console.log(diffInSeconds);
             if (cedula  && diffInSeconds <= 120) {
-              const usuario = await Usuario.findOne({cedula});
+              const usuario = await User.findOne({cedula});
               res.status(200).json(usuario);
             } else{
                 res.status(400).json({
@@ -74,16 +72,23 @@ const usuarioByQr = async(req = request, res = response) => {
     }     
 }
 
+
 const usuarioByIdGet = async(req = request, res = response) => {
     try {
         const { uid } = req.params;
-        if (uid) {
-        const usuario = await Usuario.findById(uid);
+        console.log(uid);
+        const usuario = await User.findById(uid);
+        if (usuario) {
         res.json(usuario);
-        } 
- 
+        }else{
+        res.status(400).json({
+            "msj":"No Found 404"
+        })
+        }
     } catch (error) {  
-        
+        res.status(400).json({
+            "msj":"No Found 404"
+        })        
     }     
 }
 
@@ -93,7 +98,7 @@ const usuariosAllGet = async(req = request, res = response) => {
     const { id } = req.params;
     if (id) {
     console.log("ddddddddd");
-    const usuario = await Usuario.find();
+    const usuario = await User.find();
     res.json(usuario);
     }
 
@@ -210,20 +215,15 @@ const userPost = async(req, res = response) => {
     }  
 }
 
-
-
-
-
-
-
-
 const usuariosPutState = async(req, res = response) => {
     const { id } = req.params;
     const { _id, password, google, ...resto } = req.body;
-
-    const usuariod = await Usuario.findByIdAndUpdate( id, resto );
-    const usuario = await Usuario.findById( id);
-
+    const usuariod = await User.findByIdAndUpdate( id, resto );
+    const usuario = await User.findById( id);
+    const cardApplication = new CardApplication();
+    cardApplication.user_id=usuario.id;
+    cardApplication.createdAt= Date.now();
+    cardApplication.save();
     res.json(usuario);
 }
 
@@ -236,8 +236,8 @@ const usuariosPutPassword = async(req, res = response) => {
         const salt = bcryptjs.genSaltSync();
         resto.password = bcryptjs.hashSync( password, salt );
     }
-    const user = await Usuario.findByIdAndUpdate( id, resto );
-    const usuario = await Usuario.findById( id );
+    const user = await User.findByIdAndUpdate( id, resto );
+    const usuario = await User.findById( id );
     res.json(usuario);
 }
 

@@ -5,6 +5,7 @@ const Enrollment = require('./enrollment');
 const Faculty = require('./faculty');
 const Campus = require('./campus');
 const Program = require('./program');
+const CardApplication = require('./cardApplication');
 
 module.exports = {
     Enrollment,
@@ -14,5 +15,6 @@ module.exports = {
     Role,
     Server,
     User,
+    CardApplication,
 }
 

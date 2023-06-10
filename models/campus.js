@@ -24,5 +24,4 @@ CampusSchema.methods.toJSON = function() {
     return data;
 }
 
-
 module.exports = model( 'Campus', CampusSchema );

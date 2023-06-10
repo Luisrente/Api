@@ -66,6 +66,7 @@ router.delete('/:id',[
     validateFields
 ],usuariosDelete );
 
+
 router.patch('/', usuariosPatch );
 
 

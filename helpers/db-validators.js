@@ -1,5 +1,5 @@
 const Role = require('../models/role');
-const { Usuario, Categoria, Producto } = require('../models');
+const { User } = require('../models');
 
 const esRoleValido = async(rol = '') => {
 
@@ -12,7 +12,7 @@ const esRoleValido = async(rol = '') => {
 const emailExiste = async( correo = '' ) => {
 
     // Verificar si el correo existe
-    const existeEmail = await Usuario.findOne({ email });
+    const existeEmail = await User.findOne({ email });
     if ( existeEmail ) {
         throw new Error(`El correo: ${ correo }, ya está registrado`);
     }
@@ -21,7 +21,7 @@ const emailExiste = async( correo = '' ) => {
 const existeUsuarioPorId = async( id ) => {
 
     // Verificar si el correo existe
-    const existeUsuario = await Usuario.findById(id);
+    const existeUsuario = await User.findById(id);
     if ( !existeUsuario ) {
         throw new Error(`El id no existe ${ id }`);
     }
