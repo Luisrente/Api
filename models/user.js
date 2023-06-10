@@ -45,6 +45,9 @@ const userSchema = Schema({
     status: {
         type: String,
     },
+    statusUniversity: {
+        type: String,
+    },
     createdAt: {
         type: Date,
     },

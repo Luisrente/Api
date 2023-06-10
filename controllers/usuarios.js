@@ -4,18 +4,25 @@ const { decryptString } = require('../helpers/qr');
 const moment = require('moment-timezone');
 const { Campus } = require('../models');
 const {CardApplication, User} = require('../models/index');
+const axios = require('axios');
 
 
 const usuarioByCedula = async(req = request, res = response) => {
     try {
         const { cedula } = req.params;
-        if (cedula) {
-        const usuario = await User.findOne({cedula});
+        const identification= cedula;
+        const usuario = await User.findOne({identification});
+        if (usuario) {
         res.json(usuario);
-        } 
- 
+        }else{
+            res.status(400).json({
+                "msj":"No Found 404"
+            })    
+        }
     } catch (error) {  
-        
+        res.status(500).json({
+            "msj":"No Found 500"
+        }) 
     }     
 }
 
@@ -24,49 +31,42 @@ const usuarioByQr = async(req = request, res = response) => {
         const { id } = req.params;
         console.log(id);
         const token = decryptString(id.toString());
-        console.log()
+        console.log(token);
         if (token) {
             const now = new Date();
-
-            console.log("----------------");
-            console.log(now);
-            console.log("---------------");
-
-
             const parts = token.split('/');
-            const cedula=parts[0];
+            const identification=parts[0];
+        
             const code= parts[1]+ ' '+ parts[2];
             const horaUTC = moment.utc(code);
             const horaServidor = moment();
-
             const horaBogota = horaUTC.tz('America/Bogota');
             const horaBocgota = horaServidor.tz('America/Bogota');
-            console.log(horaBocgota);
-            console.log(horaBogota);
             const diferenciaHoraria = horaBocgota.diff(horaBogota, 'seconds');
-
-            console.log('Diferencia horaria en segundos entre el servidor y Bogotá:', diferenciaHoraria, 'segundos');
-
             const date = new Date(code);
-            console.log(horaBogota);
-
-            console.log(date);
             const diffInMilliseconds = Math.abs(horaBogota - horaUTC);
             const diffInSeconds = diffInMilliseconds / 1000;
 
-            console.log(diffInSeconds);
-            if (cedula  && diffInSeconds <= 120) {
-              const usuario = await User.findOne({cedula});
-              res.status(200).json(usuario);
-            } else{
+            const usuario = await User.findOne({identification});
+            console.log(usuario);
+            if (usuario) {
+                res.status(200).json(usuario);
+            } else {
                 res.status(400).json({
-                    msg: 'invalid parameter QR'
-                })
-            }    
+                            msg: 'invalid parameter QR'
+                        })
+            }
+            
+            // if (cedula  && diffInSeconds <= 120) {
+            // } else{
+            //     res.status(400).json({
+            //         msg: 'invalid parameter QR'
+            //     })
+            // }    
         }
     } catch (error) { 
         console.log(error);
-        res.status(404).json({
+        res.status(500).json({
             msg: ' 404 invalid parameter QR'
         });    
     }     
@@ -95,28 +95,12 @@ const usuarioByIdGet = async(req = request, res = response) => {
 
 const usuariosAllGet = async(req = request, res = response) => {
 
-    const { id } = req.params;
-    if (id) {
-    console.log("ddddddddd");
-    const usuario = await User.find();
-    res.json(usuario);
+    const users = await User.find();
+    if (users) {
+    res.json({users});
     }
 
-    const { limite = 5, desde = 0 } = req.query;
-    const query = { estado: true };
-
-    const [ total, usuarios ] = await Promise.all([
-        Usuario.countDocuments(query),
-        Usuario.find(query)
-            .skip( Number( desde ) )
-            .limit(Number( limite ))
-    ]);
-
-    res.json({
-        total,
-        usuarios
-    });
-
+   
     
 }
 
@@ -150,70 +134,60 @@ const usuariosAllGet = async(req = request, res = response) => {
 // }
 
 
+
 const userPost = async(req, res = response) => {
-
-
-    try {
-    const {
-        first_name,
-        middle_name,
-        last_name,
-        second_last_name,
-        identification,
-        email,
-        role,
-        status,
-        campus,
-        programs
-    } 
-    = req.body;
-    const user = await User.findOne({identification});
-    if (user) {
-        const userUpdate = await User.findByIdAndUpdate(user.id,
-        {
-        "first_name":first_name,
-        "middle_name":middle_name,
-        "last_name":last_name,
-        "second_last_name":second_last_name,
-        "identification":identification,
-        "email":email,
-        "role":role,
-        "status":status,
-        "campus":campus,
-        "programs":programs
+    const response = await axios.get('http://localhost:8080/api/users');
+    const datos = response.data;    
+      for (const user of datos.users) {
+        try {
+        const existingUser = await User.findOne({ identification: user.identification });
+        if (existingUser) {
+            await User.findByIdAndUpdate(existingUser.id,
+                {
+                "first_name":existingUser.first_name,
+                "middle_name":existingUser.middle_name,
+                "last_name":existingUser.last_name,
+                "second_last_name":existingUser.second_last_name,
+                "identification":existingUser.identification,
+                "email":existingUser.email,
+                "role":existingUser.role,
+                "campus":existingUser.campus,
+                "programs":existingUser.programs,
+                "statusUniversity":existingUser.status
+                });
+        } else {
+            const salt = bcryptjs.genSaltSync();
+            const password= bcryptjs.hashSync( user.identification.toString(), salt );
+            const userCreate = new User(
+                { 
+                    "first_name":user.first_name,
+                    "middle_name":user.middle_name,
+                    "last_name":user.last_name,
+                    "second_last_name":user.second_last_name,
+                    "identification":user.identification,
+                    "password":password,
+                    "email":user.email,
+                    "role":user.role,
+                    "status":user.status,
+                    "campus":user.campus,
+                    "programs":user.programs,
+                    "profile_picture":'',
+                    "identification_picture":'',
+                    "createdAt":  Date.now()
+               }
+               );
+               await userCreate.save();
+            }
+            } catch (error) {
+                console.log(error);
+            }  
+        }
+        res.status(200).json({
+            msg: 'OK'
         });
-    } else {
-  const userCreate = new Usuario(
-    { 
-        first_name,
-        middle_name,
-        last_name,
-        second_last_name,
-        identification,
-        email,
-        role,
-        status,
-        campus,
-        programs
-   }
-   );
-    const salt = bcryptjs.genSaltSync();
-    userCreate.password = bcryptjs.hashSync( identification.toString(), salt );
-    campu = await Campus.findOne({"name":campus})
-    userCreate.campus_id= campu.id;
-    userCreate.createdAt= await  Date.now();
-    userCreate.profile_picture= '';
-    userCreate.identification_picture= '';
-    const result= await userCreate.save(); 
-}    
+      }
 
-    } catch (error) {
-        console.log(error);
-        res.status(400).json({
-            "msg": "User no create"
-        }); 
-    }  
-}
+
 
 const usuariosPutState = async(req, res = response) => {
     const { id } = req.params;
