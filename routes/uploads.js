@@ -14,7 +14,7 @@ router.post( '/', cargarArchivo );
 router.put('/:type/:coleccion/:id', [
     // validarArchivoSubir,
     check('id','El id debe de ser de mongo').isMongoId(),
-    check('coleccion').custom( c => coleccionesPermitidas( c, ['usuarios','productos'] ) ),
+    // check('coleccion').custom( c => coleccionesPermitidas( c, ['usuarios','productos'] ) ),
     validateFields
 ], actualizarImagenCloudinary )
 // ], actualizarImagen )
