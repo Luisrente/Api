@@ -7,7 +7,7 @@ cloudinary.config( process.env.CLOUDINARY_URL );
 const { response } = require('express');
 const { subirArchivo } = require('../helpers');
 
-const { Usuario, Producto } = require('../models');
+const { User, Producto } = require('../models');
 
 
 const cargarArchivo = async(req, res = response) => {
@@ -87,14 +87,12 @@ const actualizarImagenCloudinary = async(req, res = response ) => {
     const { id, type, coleccion } = req.params;
 
     let modelo;
-    const _id=id;
-    
-     const dd= await Usuario.findById('64840c29d4070791c123ad46');
-     console.log(dd);
+    let _id=id;
+    console.log(_id);
 
     switch ( coleccion ) {
         case 'usuarios':
-            modelo = await Usuario.findById(_id);
+            modelo = await User.findById(_id);
             if ( !modelo ) {
                 return res.status(400).json({
                     msg: `No existe un usuario con el id ${ id }`
@@ -127,11 +125,11 @@ const actualizarImagenCloudinary = async(req, res = response ) => {
 
     switch ( type ) {
         case 'img':  
-        modelo.img = secure_url;
+        modelo.profile_picture = secure_url;
         break;
 
         case 'cedulaImg':  
-        modelo.cedulaImg = secure_url;
+        modelo.identification_picture = secure_url;
         break;
     
         default:
@@ -147,6 +145,9 @@ const actualizarImagenCloudinary = async(req, res = response ) => {
         );
 
 }
+
+
+
 
 const mostrarImagen = async(req, res = response ) => {
 
