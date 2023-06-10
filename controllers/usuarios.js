@@ -117,113 +117,98 @@ const usuariosAllGet = async(req = request, res = response) => {
 
 
 
-const userPost = async(req, res = response) => {
-    try {
-        const body= req.body;
-        const enrollmentDB = await Enrollment.findOne({ code: body.code });
-        const userDB = await User.findOne({ identification: body.identification });
-        const programDB = await Program.findOne({ name: body.nombre });
-        console.log(userDB);
-        console.log(programDB);
-        if (enrollmentDB) {
-
-            const enrollmentDBUpdate = await Enrollment.findByIdAndUpdate(user.id,
-                {
-                "user_id":  userDB.id,
-                "program_id":  programDB.id,
-                "semester": semester,
-                }
-                );
-        } else {
-            const enrollment = new Enrollment({user_id:userDB._id,program_id:programDB._id,semester:body.semester,code:body.code , createdAt: Date.now(),  });
-            await enrollment.save(); 
-        }
-    } catch (error) {
-        console.log(error);
-   
-    }
-}
-
-
 // const userPost = async(req, res = response) => {
-
-
-
-// {
-       
-//     "first_name": "Joeehn",
-//     "middle_name": "Doe",
-//     "last_name": "Smissth",
-//     "second_last_name": "Johnson",
-//     "identification": 126266262621,
-//     "email": "john.doe@example.com",
-//     "role": "USER_ROLE",
-//     "status":"ACTIVO",
-//     "campus":"MONTERIA"
-//   }
-
-
-
-
-
 //     try {
-//     const {
-//         first_name,
-//         middle_name,
-//         last_name,
-//         second_last_name,
-//         identification,
-//         email,
-//         role,
-//         status,
-//         campus
-//     } 
-//     = req.body;
-//     const user = await User.findOne({identification});
-//     if (user) {
-//         const userUpdate = await User.findByIdAndUpdate(user.id,
-//         {
-//         "first_name":first_name,
-//         "middle_name":middle_name,
-//         "last_name":last_name,
-//         "second_last_name":second_last_name,
-//         "identification":identification,
-//         "email":email,
-//         "role":role,
-//         "status":status,
-//         "campus":campus
-//         });
-//     } else {
-//   const userCreate = new Usuario(
-//     { 
-//         first_name,
-//         middle_name,
-//         last_name,
-//         second_last_name,
-//         identification,
-//         email,
-//         role,
-//         status,
-//         campus
-//    }
-//    );
-//     const salt = bcryptjs.genSaltSync();
-//     userCreate.password = bcryptjs.hashSync( identification.toString(), salt );
-//     campu = await Campus.findOne({"name":campus})
-//     userCreate.campus_id= campu.id;
-//     userCreate.createdAt= await  Date.now();
-//     userCreate.profile_picture= '';
-//     userCreate.identification_picture= '';
-//     const result= await userCreate.save(); 
-// }    
+//         const body= req.body;
+//         const enrollmentDB = await Enrollment.findOne({ code: body.code });
+//         const userDB = await User.findOne({ identification: body.identification });
+//         const programDB = await Program.findOne({ name: body.nombre });
+//         console.log(userDB);
+//         console.log(programDB);
+//         if (enrollmentDB) {
 
+//             const enrollmentDBUpdate = await Enrollment.findByIdAndUpdate(user.id,
+//                 {
+//                 "user_id":  userDB.id,
+//                 "program_id":  programDB.id,
+//                 "semester": semester,
+//                 }
+//                 );
+//         } else {
+//             const enrollment = new Enrollment({user_id:userDB._id,program_id:programDB._id,semester:body.semester,code:body.code , createdAt: Date.now(),  });
+//             await enrollment.save(); 
+//         }
 //     } catch (error) {
 //         console.log(error);
-//         res.status(400).json({
-//             "msg": "User no create"
-//         }); 
-//     }  
+   
+//     }
 // }
+
+
+const userPost = async(req, res = response) => {
+
+
+    try {
+    const {
+        first_name,
+        middle_name,
+        last_name,
+        second_last_name,
+        identification,
+        email,
+        role,
+        status,
+        campus,
+        programs
+    } 
+    = req.body;
+    const user = await User.findOne({identification});
+    if (user) {
+        const userUpdate = await User.findByIdAndUpdate(user.id,
+        {
+        "first_name":first_name,
+        "middle_name":middle_name,
+        "last_name":last_name,
+        "second_last_name":second_last_name,
+        "identification":identification,
+        "email":email,
+        "role":role,
+        "status":status,
+        "campus":campus,
+        "programs":programs
+        });
+    } else {
+  const userCreate = new Usuario(
+    { 
+        first_name,
+        middle_name,
+        last_name,
+        second_last_name,
+        identification,
+        email,
+        role,
+        status,
+        campus,
+        programs
+   }
+   );
+    const salt = bcryptjs.genSaltSync();
+    userCreate.password = bcryptjs.hashSync( identification.toString(), salt );
+    campu = await Campus.findOne({"name":campus})
+    userCreate.campus_id= campu.id;
+    userCreate.createdAt= await  Date.now();
+    userCreate.profile_picture= '';
+    userCreate.identification_picture= '';
+    const result= await userCreate.save(); 
+}    
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({
+            "msg": "User no create"
+        }); 
+    }  
+}
 
 
 

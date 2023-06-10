@@ -1,3 +1,4 @@
+const { Schema, model } = require('mongoose');
 const mongoose = require('mongoose');
 
 const enrollmentSchema = new mongoose.Schema({
@@ -11,14 +12,6 @@ const enrollmentSchema = new mongoose.Schema({
     ref: 'Program', 
     required: true 
   },
-  code: { 
-    type: String, 
-    required: true 
-  },
-  semester: { 
-    type: String, 
-    required: true 
-  },
   createdAt: {
     type: Date,
    },
@@ -30,6 +23,10 @@ const enrollmentSchema = new mongoose.Schema({
   
 });
 
-const Enrollment = mongoose.model('Enrollment', enrollmentSchema);
+enrollmentSchema.methods.toJSON = function() {
+  const { __v,createdAt, updatedAt , ...enrollment  } = this.toObject();
+  return enrollment;
+}
 
-module.exports = Enrollment;
+module.exports=model('Enrollment', enrollmentSchema);
+

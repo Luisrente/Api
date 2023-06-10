@@ -20,7 +20,7 @@ const CampusSchema = Schema({
 
 
 CampusSchema.methods.toJSON = function() {
-    const { __v,...data  } = this.toObject();
+    const { __v,createdAt,updatedAt, ...data  } = this.toObject();
     return data;
 }
 

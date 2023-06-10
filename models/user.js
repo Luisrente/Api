@@ -2,6 +2,9 @@
 const { Schema, model } = require('mongoose');
 
 const userSchema = Schema({
+    uid: {
+        type: String,
+    },
     first_name: {
         type: String,
         required: [true, 'El nombre1 es obligatorio']
@@ -24,28 +27,20 @@ const userSchema = Schema({
         type: String,
         required: [true, 'El programa es obligatorio']
     },
-    enrollments: [{
-        type: Schema.Types.ObjectId, 
-        ref: 'Enrollment',
-    }],
-    program_id: {
-        type: Schema.Types.ObjectId, 
-        ref: 'Program',
-    },
-    campus_id: { 
-        type: Schema.Types.ObjectId, 
+    campus: { 
+        type: String, 
         ref: 'Campus', 
     },
+    programs: [{ 
+        type: String, 
+    }],
     password: {
         type: String,
     },
     profile_picture: String,
     identification_picture: String,
-    rol: {
+    role: {
         type: String,
-        required: true,
-        default: 'USER_ROLE',
-        emun: ['ADMIN_ROLE', 'USER_ROLE']
     },
     status: {
         type: String,
@@ -62,8 +57,8 @@ const userSchema = Schema({
 
 
 userSchema.methods.toJSON = function() {
-    const { __v, password, _id, ...usuario  } = this.toObject();
-    usuario.uid = _id;
+    const { __v, password, _id,createdAt, updatedAt , ...usuario  } = this.toObject();
+    usuario.uid=_id;
     return usuario;
 }
 
