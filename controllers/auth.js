@@ -9,6 +9,8 @@ const { generateNumero } = require('../helpers/generate-code');
 const login = async(req, res = response) => {
     const { email, password } = req.body;
 
+    console.log(email);
+
     try {
         const user = await User.findOne({ email });
 //    const user   = await User.findOne({email})

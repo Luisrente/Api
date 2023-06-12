@@ -152,9 +152,9 @@ const userPost = async(req, res = response) => {
                 "identification":existingUser.identification,
                 "email":existingUser.email,
                 "role":existingUser.role,
-                "campus":existingUser.campus,
+                "campus":'existingUser.campu',
                 "programs":existingUser.programs,
-                "statusUniversity":existingUser.status
+                "statusUnniversity":existingUser.status
                 });
         } else {
             const salt = bcryptjs.genSaltSync();
