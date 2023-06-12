@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { validateFields } = require('../middlewares/index');
-const { login , sendEmail} = require('../controllers/auth');
+const { login , sendEmail,verificationEmail} = require('../controllers/auth');
 
 const router = Router();
 
@@ -14,6 +14,9 @@ router.post('/login',[
 
 router.post('/send',[
 ], sendEmail );
+
+router.post('/verifi',[
+], verificationEmail );
 
 
 
