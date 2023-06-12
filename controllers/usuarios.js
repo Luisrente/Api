@@ -137,6 +137,7 @@ const usuariosAllGet = async(req = request, res = response) => {
 
 const userPost = async(req, res = response) => {
     const response = await axios.get('http://3.85.53.75:3000/api/users');
+    console.log(response);
     const datos = response.data;   
       for (const user of datos.users) {
         try {
