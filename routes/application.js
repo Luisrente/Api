@@ -7,7 +7,7 @@ const { listApplications , updateApplications} = require('../controllers/applica
 
 
 router.get('/', listApplications );
-router.post('/', updateApplications );
+router.put('/', updateApplications );
 
 
 module.exports = router;
