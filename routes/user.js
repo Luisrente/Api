@@ -29,6 +29,7 @@ const router = Router();
 
 router.get('/', usuariosAllGet );
 
+router.get('/up', userPost );
 
 //LIST USER BY ID
 router.get('/:uid', usuarioByIdGet );
@@ -37,14 +38,12 @@ router.get('/:uid', usuarioByIdGet );
 router.get('/cedula/:cedula', usuarioByCedula );
 router.get('/qr/:id', usuarioByQr );
 
-
 //UPDATE PASSWORD
 router.put('/:id',[
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom( existeUsuarioPorId ),
     validateFields
 ],usuariosPutPassword );
-
 
 //UPDATE STATE
 router.put('/state/:id',[
@@ -53,11 +52,6 @@ router.put('/state/:id',[
     validateFields
 ],usuariosPutState );
 
-router.post('/',[
-    check('password', 'El password debe de ser más de 6 letras').isLength({ min: 6 }),
-    check('email', 'El email no es válido').isEmail(),
-    check('email').custom( emailExiste ),
-], userPost );
 
 router.delete('/:id',[
     validateJWT,

@@ -136,8 +136,8 @@ const usuariosAllGet = async(req = request, res = response) => {
 
 
 const userPost = async(req, res = response) => {
-    const response = await axios.get('http://localhost:8080/api/users');
-    const datos = response.data;    
+    const response = await axios.get('http://3.85.53.75:3000/api/users');
+    const datos = response.data;   
       for (const user of datos.users) {
         try {
         const existingUser = await User.findOne({ identification: user.identification });
@@ -237,7 +237,7 @@ const usuariosDelete = async(req, res = response) => {
 module.exports = {
 
     userPost,
-
+    
     usuariosAllGet,
     usuarioByIdGet,
 
