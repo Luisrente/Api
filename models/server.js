@@ -23,6 +23,7 @@ class Server {
             uploads:    '/api/uploads',
             program:    '/api/program',
             campus:    '/api/campus',
+            application:    '/api/application',
         }
         // Conectar a base de datos
         this.conectarDB();
@@ -60,6 +61,7 @@ class Server {
         
         this.app.use( this.paths.auth, require('../routes/auth'));
         this.app.use( this.paths.user, require('../routes/user'));
+        this.app.use( this.paths.application, require('../routes/application'));
 
         // this.app.use( this.paths.buscar, require('../routes/buscar'));
         // this.app.use( this.paths.categorias, require('../routes/categorias'));

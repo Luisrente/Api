@@ -6,7 +6,6 @@ const  generateNumero= () => {
     return numero.toString().padStart(4, '0');
   }
 
-
   module.exports = {
     generateNumero
 }

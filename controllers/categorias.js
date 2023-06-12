@@ -19,6 +19,7 @@ const obtenerCategorias = async(req, res = response ) => {
         total,
         categorias
     });
+    
 }
 
 const obtenerCategoria = async(req, res = response ) => {
